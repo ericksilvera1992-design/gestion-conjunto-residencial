@@ -4,125 +4,195 @@ from backend.config.conexion import obtener_conexion
 class Residente:
 
     @staticmethod
+    def _cerrar_recursos(conexion, cursor):
+        if cursor is not None:
+            cursor.close()
+
+        if conexion is not None and conexion.is_connected():
+            conexion.close()
+
+    @staticmethod
     def listar():
-        conexion = obtener_conexion()
-        cursor = conexion.cursor(dictionary=True)
+        conexion = None
+        cursor = None
 
-        cursor.execute("""
-            SELECT *
-            FROM residentes
-            ORDER BY NOMBRES
-        """)
+        try:
+            conexion = obtener_conexion()
+            cursor = conexion.cursor(dictionary=True)
 
-        datos = cursor.fetchall()
+            sql = """
+                SELECT
+                    id_residente,
+                    nombres,
+                    apellidos,
+                    correo,
+                    telefono,
+                    tipo_residente,
+                    titular,
+                    documento,
+                    id_vivienda
+                FROM residentes
+                ORDER BY nombres, apellidos
+            """
 
-        cursor.close()
-        conexion.close()
+            cursor.execute(sql)
+            return cursor.fetchall()
 
-        return datos
-
-    @staticmethod
-    def crear(id_residente, nombres, apellidos, correo, telefono, torre, id_casa, titular):
-
-        conexion = obtener_conexion()
-        cursor = conexion.cursor()
-
-        sql = """
-        INSERT INTO residentes
-        (ID_RESIDENTES, NOMBRES, APELLIDOS, CORREO, TELEFONO, TORRE, ID_CASA, TITULAR)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
-        """
-
-        valores = (
-            id_residente,
-            nombres,
-            apellidos,
-            correo,
-            telefono,
-            torre,
-            id_casa,
-            titular
-        )
-
-        cursor.execute(sql, valores)
-
-        conexion.commit()
-
-        cursor.close()
-        conexion.close()
+        finally:
+            Residente._cerrar_recursos(conexion, cursor)
 
     @staticmethod
-    def buscar_por_cedula(id_residente):
+    def crear(
+        nombres,
+        apellidos,
+        correo,
+        telefono,
+        tipo_residente,
+        titular,
+        documento,
+        id_vivienda
+    ):
+        conexion = None
+        cursor = None
 
-        conexion = obtener_conexion()
-        cursor = conexion.cursor(dictionary=True)
+        try:
+            conexion = obtener_conexion()
+            cursor = conexion.cursor()
 
-        sql = """
-        SELECT *
-        FROM residentes
-        WHERE ID_RESIDENTES = %s
-        """
+            sql = """
+                INSERT INTO residentes (
+                    nombres,
+                    apellidos,
+                    correo,
+                    telefono,
+                    tipo_residente,
+                    titular,
+                    documento,
+                    id_vivienda
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """
 
-        cursor.execute(sql, (id_residente,))
+            valores = (
+                nombres,
+                apellidos,
+                correo,
+                telefono,
+                tipo_residente,
+                titular,
+                documento,
+                id_vivienda
+            )
 
-        residente = cursor.fetchone()
+            cursor.execute(sql, valores)
+            conexion.commit()
 
-        cursor.close()
-        conexion.close()
+            return cursor.lastrowid
 
-        return residente
+        finally:
+            Residente._cerrar_recursos(conexion, cursor)
 
     @staticmethod
-    def actualizar(id_residente, nombres, apellidos, correo, telefono, torre, id_casa, titular):
+    def buscar_por_cedula(documento):
+        conexion = None
+        cursor = None
 
-        conexion = obtener_conexion()
-        cursor = conexion.cursor()
+        try:
+            conexion = obtener_conexion()
+            cursor = conexion.cursor(dictionary=True)
 
-        sql = """
-        UPDATE residentes
-        SET
-            NOMBRES=%s,
-            APELLIDOS=%s,
-            CORREO=%s,
-            TELEFONO=%s,
-            TORRE=%s,
-            ID_CASA=%s,
-            TITULAR=%s
-        WHERE ID_RESIDENTES=%s
-        """
+            sql = """
+                SELECT
+                    id_residente,
+                    nombres,
+                    apellidos,
+                    correo,
+                    telefono,
+                    tipo_residente,
+                    titular,
+                    documento,
+                    id_vivienda
+                FROM residentes
+                WHERE documento = %s
+            """
 
-        valores = (
-            nombres,
-            apellidos,
-            correo,
-            telefono,
-            torre,
-            id_casa,
-            titular,
-            id_residente
-        )
+            cursor.execute(sql, (documento,))
+            return cursor.fetchone()
 
-        cursor.execute(sql, valores)
+        finally:
+            Residente._cerrar_recursos(conexion, cursor)
 
-        conexion.commit()
+    @staticmethod
+    def actualizar(
+        id_residente,
+        nombres,
+        apellidos,
+        correo,
+        telefono,
+        tipo_residente,
+        titular,
+        documento,
+        id_vivienda
+    ):
+        conexion = None
+        cursor = None
 
-        cursor.close()
-        conexion.close()
+        try:
+            conexion = obtener_conexion()
+            cursor = conexion.cursor()
+
+            sql = """
+                UPDATE residentes
+                SET
+                    nombres = %s,
+                    apellidos = %s,
+                    correo = %s,
+                    telefono = %s,
+                    tipo_residente = %s,
+                    titular = %s,
+                    documento = %s,
+                    id_vivienda = %s
+                WHERE id_residente = %s
+            """
+
+            valores = (
+                nombres,
+                apellidos,
+                correo,
+                telefono,
+                tipo_residente,
+                titular,
+                documento,
+                id_vivienda,
+                id_residente
+            )
+
+            cursor.execute(sql, valores)
+            conexion.commit()
+
+            return cursor.rowcount
+
+        finally:
+            Residente._cerrar_recursos(conexion, cursor)
 
     @staticmethod
     def eliminar(id_residente):
+        conexion = None
+        cursor = None
 
-        conexion = obtener_conexion()
-        cursor = conexion.cursor()
+        try:
+            conexion = obtener_conexion()
+            cursor = conexion.cursor()
 
-        sql = """
-        DELETE FROM residentes
-        WHERE ID_RESIDENTES=%s
-        """
+            sql = """
+                DELETE FROM residentes
+                WHERE id_residente = %s
+            """
 
-        cursor.execute(sql, (id_residente,))
+            cursor.execute(sql, (id_residente,))
+            conexion.commit()
 
-        conexion.commit()
+            return cursor.rowcount
 
-        cursor.close()
-        conexion.close()
+        finally:
+            Residente._cerrar_recursos(conexion, cursor)

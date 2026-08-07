@@ -26,25 +26,36 @@ def solicitar_titular():
         print("Valor no válido. Escribe SI o NO.")
 
 
+def solicitar_campo_obligatorio(nombre_campo):
+    while True:
+        valor = input(f"{nombre_campo}: ").strip()
+
+        if valor:
+            return valor
+
+        print(f"El campo {nombre_campo.lower()} no puede quedar vacío.")
+
+
 def main():
-    print("===== REGISTRAR RESIDENTE =====")
+    print("===== ACTUALIZAR RESIDENTE =====")
 
     try:
-        id_residente = ResidenteControlador.crear(
+        registros_actualizados = ResidenteControlador.actualizar(
+            input("Id del residente: ").strip(),
             input("Nombres: ").strip(),
             input("Apellidos: ").strip(),
-            input("Correo: ").strip(),
+            solicitar_campo_obligatorio("Correo"),
             input("Teléfono: ").strip(),
             solicitar_tipo_residente(),
             solicitar_titular(),
-            input("Documento: ").strip(),
+            solicitar_campo_obligatorio("Documento"),
             input("Id de vivienda: ").strip()
         )
 
-        print(
-            "\nResidente registrado correctamente. "
-            f"Id generado: {id_residente}"
-        )
+        if registros_actualizados == 1:
+            print("\nResidente actualizado correctamente.")
+        else:
+            print("\nNo se encontró un residente con ese id.")
     except (ConnectionError, Error, ValueError) as error:
         print(f"\nError: {error}")
 

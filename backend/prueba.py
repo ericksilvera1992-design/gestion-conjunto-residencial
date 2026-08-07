@@ -1,11 +1,21 @@
-from backend.modelos.residente import Residente
+from backend.controladores.residente_controlador import ResidenteControlador
+from mysql.connector import Error
 
-cedula = int(input("Ingrese la cédula: "))
 
-residente = Residente.buscar_por_cedula(cedula)
+def main():
+    documento = input("Ingrese el documento: ").strip()
 
-if residente:
-    print("\n===== RESIDENTE ENCONTRADO =====")
-    print(residente)
-else:
-    print("\nNo se encontró ningún residente.")
+    try:
+        residente = ResidenteControlador.buscar_por_documento(documento)
+
+        if residente:
+            print("\n===== RESIDENTE ENCONTRADO =====")
+            print(residente)
+        else:
+            print("\nNo se encontró ningún residente.")
+    except (ConnectionError, Error, ValueError) as error:
+        print(f"\nError: {error}")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,8 +1,22 @@
-from backend.modelos.residente import Residente
+from backend.controladores.residente_controlador import ResidenteControlador
+from mysql.connector import Error
 
-residentes = Residente.listar()
 
-print("===== LISTA DE RESIDENTES =====")
+def main():
+    try:
+        residentes = ResidenteControlador.listar()
 
-for residente in residentes:
-    print(residente)
+        print("===== LISTA DE RESIDENTES =====")
+
+        if not residentes:
+            print("No hay residentes registrados.")
+            return
+
+        for residente in residentes:
+            print(residente)
+    except (ConnectionError, Error) as error:
+        print(f"\nError: {error}")
+
+
+if __name__ == "__main__":
+    main()
