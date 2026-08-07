@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Residentes - Lucrier</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <img class="brand-logo" src="pages/logo.png" alt="Logo Lucrier">
+        <div class="brand-info">
+          <strong>Lucriersof</strong>
+          <small>Administración</small>
+        </div>
+      </div>
+      <div class="nav-group">
+        <p class="nav-title">Gestión</p>
+        <nav>
+          <a href="dashboard.html"><span class="icon">🏠</span>Inicio</a>
+          <a href="residentes.html" class="active"><span class="icon">👥</span>Residentes</a>
+          <a href="vehiculos.html"><span class="icon">🚗</span>Vehículos</a>
+          <a href="visitas.html"><span class="icon">🧑‍🤝‍🧑</span>Visitas</a>
+          <a href="pagos.html"><span class="icon">💳</span>Pagos</a>
+          <a href="reservas.html"><span class="icon">📅</span>Reservas</a>
+        </nav>
+      </div>
+      <div class="nav-group">
+        <p class="nav-title">Sistema</p>
+        <nav>
+          <a href="#"><span class="icon">🏢</span>Zonas Comunes</a>
+          <a href="#"><span class="icon">📣</span>Comunicados</a>
+          <a href="#"><span class="icon">📊</span>Reportes</a>
+          <a href="#"><span class="icon">⚙️</span>Configuración</a>
+        </nav>
+      </div>
+    </div>
+    <div class="profile-card">
+      <div class="profile-avatar">CA</div>
+      <div class="profile-info">
+        <strong>Carlos Arango</strong>
+        <small>Administrador</small>
+      </div>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button id="menuToggle2" class="menu-btn">☰</button>
+      <div class="user">Erick Silvera</div>
+    </header>
+    <section class="content">
+      <h2>Gestión de Residentes</h2>
+      <div class="toolbar">
+        <button id="addResidentBtn" class="btn primary">+ Nuevo Residente</button>
+      </div>
+
+      <div class="cards stats-cards">
+        <div class="card stat-card">
+          <div class="stat-label">Total Residentes</div>
+          <div class="stat-value" id="totalResidents">10</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Propietarios</div>
+          <div class="stat-value" id="ownersCount">6</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Arrendatarios</div>
+          <div class="stat-value" id="rentersCount">4</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">En Mora</div>
+          <div class="stat-value" id="delinquentCount">2</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-row">
+          <div class="search-group">
+            <span class="search-icon">🔍</span>
+            <input id="searchResident" placeholder="Buscar residente, apartamento...">
+          </div>
+          <select id="filterType" class="filter">
+            <option value="all">Todos</option>
+            <option value="Propietario">Propietario</option>
+            <option value="Arrendatario">Arrendatario</option>
+          </select>
+          <select id="filterStatus" class="filter">
+            <option value="all">Todos</option>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+          </select>
+          <div class="results-count"><span id="resultsCount">10 resultados</span></div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="table" id="residentsTable">
+          <thead>
+            <tr>
+              <th>Cédula</th>
+              <th>Nombre</th>
+              <th>Teléfono</th>
+              <th>Torre</th>
+              <th>Apartamento</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="residentsTableBody">
+            <tr><td colspan="8" style="text-align:center;padding:40px;color:#999">Cargando residentes...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-overlay hidden" id="residentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h2>Agregar residente</h2>
+          <p>Registra un nuevo propietario o arrendatario.</p>
+        </div>
+        <button class="close-btn" id="closeResidentModal" type="button">×</button>
+      </div>
+      <form id="residentForm" class="form">
+        <div class="form-note">Todos los campos marcados con <span class="required">*</span> son obligatorios.</div>
+        <div class="form-row">
+          <div class="field">
+            <label for="cedula">Cédula <span class="required">*</span></label>
+            <input id="cedula" name="cedula" type="text" required>
+          </div>
+          <div class="field">
+            <label for="fullName">Nombre completo <span class="required">*</span></label>
+            <input id="fullName" name="fullName" type="text" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="phone">Teléfono <span class="required">*</span></label>
+            <input id="phone" name="phone" type="tel" required>
+          </div>
+          <div class="field">
+            <label for="tower">Torre <span class="required">*</span></label>
+            <input id="tower" name="tower" type="text" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="apartment">Apartamento <span class="required">*</span></label>
+            <input id="apartment" name="apartment" type="text" required>
+          </div>
+          <div class="field">
+            <label for="residentType">Tipo <span class="required">*</span></label>
+            <select id="residentType" name="residentType" required>
+              <option value="">Selecciona</option>
+              <option value="Propietario">Propietario</option>
+              <option value="Arrendatario">Arrendatario</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn" id="cancelResidentBtn">Cancelar</button>
+          <button type="submit" class="btn primary">Guardar residente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

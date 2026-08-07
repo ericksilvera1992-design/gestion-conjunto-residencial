@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Visitas - Lucrier</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <img class="brand-logo" src="pages/logo.png" alt="Logo Lucrier">
+        <div class="brand-info">
+          <strong>Lucriersof</strong>
+          <small>Administración</small>
+        </div>
+      </div>
+      <div class="nav-group">
+        <p class="nav-title">Gestión</p>
+        <nav>
+          <a href="dashboard.html"><span class="icon">🏠</span>Inicio</a>
+          <a href="residentes.html"><span class="icon">👥</span>Residentes</a>
+          <a href="vehiculos.html"><span class="icon">🚗</span>Vehículos</a>
+          <a href="visitas.html" class="active"><span class="icon">🧑‍🤝‍🧑</span>Visitas</a>
+          <a href="pagos.html"><span class="icon">💳</span>Pagos</a>
+          <a href="reservas.html"><span class="icon">📅</span>Reservas</a>
+        </nav>
+      </div>
+    </div>
+    <div class="profile-card">
+      <div class="profile-avatar">CA</div>
+      <div class="profile-info">
+        <strong>Carlos Arango</strong>
+        <small>Administrador</small>
+      </div>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button id="menuToggle3" class="menu-btn">☰</button>
+      <div class="user">Erick Silvera</div>
+    </header>
+    <section class="content">
+      <h2>Gestión de Visitas</h2>
+
+      <div class="visits-layout">
+        <div class="col left">
+          <div class="card resident-info">
+            <div class="resident-top">
+              <div class="avatar large" id="resAvatar">MP</div>
+              <div class="resident-details">
+                <div class="muted small">Residente autenticado</div>
+                <h3 id="resName">María Pérez</h3>
+                <div id="resLocation" class="small-text">Torre A · Apt 101</div>
+                <div class="stats-row">
+                  <div class="stat"><div class="stat-value" id="activeVisitsCount">0</div><div class="stat-label">Visitas activas</div></div>
+                </div>
+              </div>
+            </div>
+
+            <form id="visitForm" class="form form-compact">
+              <h4 style="margin-top:12px">Registrar visitante</h4>
+              <div class="form-row">
+                <div class="field"><label for="visitorName">Nombre del visitante</label>
+                  <input id="visitorName" type="text" list="visitorList" placeholder="Ej: Juan Pérez" required>
+                  <datalist id="visitorList"></datalist>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="field"><label for="visitorDocument">Documento</label>
+                  <input id="visitorDocument" type="text" placeholder="Cédula/NIE" required></div>
+              </div>
+              <div class="form-row">
+                <div class="field"><label for="visitDate">Fecha</label>
+                  <input id="visitDate" type="date" required></div>
+                <div class="field"><label for="visitTime">Hora estimada</label>
+                  <input id="visitTime" type="time" required></div>
+              </div>
+              <div class="form-row">
+                <div class="field full-width"><label for="validMinutes">Tiempo de vigencia</label>
+                  <select id="validMinutes">
+                    <option value="15">15 minutos</option>
+                    <option value="30">30 minutos</option>
+                    <option value="60">1 hora</option>
+                    <option value="120">2 horas</option>
+                    <option value="custom">Personalizado</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row hidden" id="customMinutesRow">
+                <div class="field full-width"><label for="customMinutes">Minutos personalizados</label>
+                  <input id="customMinutes" type="number" min="1" placeholder="Ej: 45"></div>
+              </div>
+
+              <div class="form-actions">
+                <button id="generateQrBtn" class="btn primary">Generar QR</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="col right">
+          <div class="card qr-preview" id="qrCard">
+            <div class="card-header"><h3>QR Generado</h3></div>
+            <div class="qr-body">
+              <div id="qrPreview" class="qr-box">
+                <div class="qr-placeholder">Aún no hay QR</div>
+              </div>
+              <div class="qr-info">
+                <div><strong>Estado:</strong> <span id="qrState">—</span></div>
+                <div><strong>Creado:</strong> <span id="qrCreated">—</span></div>
+                <div><strong>Vence:</strong> <span id="qrExpires">—</span></div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button id="downloadQrBtn" class="btn">Descargar QR</button>
+              <button id="shareQrBtn" class="btn">Compartir QR</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:22px">
+        <h3>Historial de Visitas</h3>
+        <div class="panel">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div class="small-text">Listado de ingresos y salidas</div>
+            <div><button id="clearHistoryBtn" class="btn">Limpiar historial</button></div>
+          </div>
+          <div class="table-container">
+            <table class="table" id="visitHistoryTable">
+              <thead>
+                <tr>
+                  <th>Visitante</th>
+                  <th>Documento</th>
+                  <th>Fecha</th>
+                  <th>Hora</th>
+                  <th>Estado</th>
+                  <th>Fecha de ingreso</th>
+                  <th>Fecha de salida</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    </section>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

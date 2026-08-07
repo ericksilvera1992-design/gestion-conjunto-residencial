@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Vehículos - Lucrier</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <img class="brand-logo" src="pages/logo.png" alt="Logo Lucrier">
+        <div class="brand-info">
+          <strong>Lucriersof</strong>
+          <small>Administración</small>
+        </div>
+      </div>
+      <div class="nav-group">
+        <p class="nav-title">Gestión</p>
+        <nav>
+          <a href="dashboard.html"><span class="icon">🏠</span>Inicio</a>
+          <a href="residentes.html"><span class="icon">👥</span>Residentes</a>
+          <a href="vehiculos.html" class="active"><span class="icon">🚗</span>Vehículos</a>
+          <a href="visitas.html"><span class="icon">🧑‍🤝‍🧑</span>Visitas</a>
+          <a href="pagos.html"><span class="icon">💳</span>Pagos</a>
+          <a href="reservas.html"><span class="icon">📅</span>Reservas</a>
+        </nav>
+      </div>
+      <div class="nav-group">
+        <p class="nav-title">Sistema</p>
+        <nav>
+          <a href="#"><span class="icon">🏢</span>Zonas Comunes</a>
+          <a href="#"><span class="icon">📣</span>Comunicados</a>
+          <a href="#"><span class="icon">📊</span>Reportes</a>
+          <a href="#"><span class="icon">⚙️</span>Configuración</a>
+        </nav>
+      </div>
+    </div>
+    <div class="profile-card">
+      <div class="profile-avatar">CA</div>
+      <div class="profile-info">
+        <strong>Carlos Arango</strong>
+        <small>Administrador</small>
+      </div>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button id="menuToggle4" class="menu-btn">☰</button>
+      <div class="user">Erick Silvera</div>
+    </header>
+    <section class="content">
+      <h2>Gestión de Vehículos</h2>
+      <div class="toolbar">
+        <button id="addVehicleBtn" class="btn primary">+ Nuevo Vehículo</button>
+      </div>
+
+      <div class="panel">
+        <div class="panel-row">
+          <div class="search-group">
+            <span class="search-icon">🔍</span>
+            <input id="searchVehicle" placeholder="Buscar por placa, marca o modelo...">
+          </div>
+          <div class="results-count"><span id="vehiclesResultsCount">1 resultado</span></div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="table" id="vehiclesTable">
+          <thead>
+            <tr>
+              <th>Placa</th>
+              <th>Marca</th>
+              <th>Modelo</th>
+              <th>Color</th>
+              <th>Cedula</th>
+              <th>Nombre</th>
+              <th>Apto o Casa</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="vehiclesTableBody">
+            <tr><td colspan="8" style="text-align:center;padding:40px;color:#999">Cargando vehículos...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-overlay hidden" id="vehicleModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h2>Agregar vehículo</h2>
+          <p>Registra los datos principales del vehículo.</p>
+        </div>
+        <button class="close-btn" id="closeVehicleModal" type="button">×</button>
+      </div>
+      <form id="vehicleForm" class="form">
+        <div class="form-note">Todos los campos marcados con <span class="required">*</span> son obligatorios.</div>
+        <div class="form-row">
+          <div class="field">
+            <label for="vehiclePlate">Placa <span class="required">*</span></label>
+            <input id="vehiclePlate" name="plate" type="text" required>
+          </div>
+          <div class="field">
+            <label for="vehicleBrand">Marca <span class="required">*</span></label>
+            <input id="vehicleBrand" name="brand" type="text" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="vehicleModel">Modelo <span class="required">*</span></label>
+            <input id="vehicleModel" name="model" type="text" required>
+          </div>
+          <div class="field">
+            <label for="vehicleColor">Color <span class="required">*</span></label>
+            <input id="vehicleColor" name="color" type="text" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="vehicleCedula">Cedula <span class="required">*</span></label>
+            <input id="vehicleCedula" name="cedula" type="text" required>
+          </div>
+          <div class="field">
+            <label for="vehicleOwnerName">Nombre <span class="required">*</span></label>
+            <input id="vehicleOwnerName" name="ownerName" type="text" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="vehicleHome">Apto o Casa <span class="required">*</span></label>
+            <input id="vehicleHome" name="home" type="text" required>
+          </div>
+          <div class="field"></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn" id="cancelVehicleBtn">Cancelar</button>
+          <button type="submit" class="btn primary">Guardar vehículo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

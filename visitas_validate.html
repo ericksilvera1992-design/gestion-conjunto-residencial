@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Validar Visita - Lucrier</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div style="max-width:760px;margin:40px auto;padding:20px">
+    <h2>Validación de visita</h2>
+    <div id="resultCard" class="panel" style="margin-top:12px">
+      <div id="statusText" style="font-weight:700;margin-bottom:8px"></div>
+      <div id="infoBlock" class="small-text"></div>
+      <div id="scanNote" style="margin-top:12px;color:var(--muted)"></div>
+    </div>
+  </div>
+
+  <script>
+  // Parse query param 'token' (preferred) or legacy 'data'
+  (function(){
+    function qs(name){
+      const params=new URLSearchParams(location.search);
+      return params.get(name);
+    }
+    const tokenParam=qs('token');
+    const legacy=qs('data');
+    const resultText=document.getElementById('statusText');
+    const infoBlock=document.getElementById('infoBlock');
+    const scanNote=document.getElementById('scanNote');
+
+    if(!tokenParam && !legacy){
+      resultText.textContent='Código inválido o dañado.';
+      scanNote.textContent='Asegúrate de que el QR corresponde a este sistema.';
+      return;
+    }
+
+    // Helper to append visitHistory
+    function pushHistory(entry){
+      try{
+        const rawHist=localStorage.getItem('visitHistory');
+        const hist= rawHist? JSON.parse(rawHist):[];
+        hist.push(entry);
+        localStorage.setItem('visitHistory', JSON.stringify(hist));
+      }catch(e){console.error('Error guardando historial',e);}    
+    }
+
+    if(tokenParam){
+      try{
+        const b64=decodeURIComponent(tokenParam);
+        const jsonStr=decodeURIComponent(escape(atob(b64)));
+        const obj=JSON.parse(jsonStr);
+        const now=new Date();
+        const exp=new Date(obj.expiresAt);
+
+        const issuedRaw=localStorage.getItem('issuedVisits');
+        const issued=issuedRaw?JSON.parse(issuedRaw):[];
+        const issuedIdx=issued.findIndex(i=>i.tokenId===obj.tokenId);
+
+        // Expired token
+        if(now>exp){
+          pushHistory({
+            tokenId: obj.tokenId,
+            visitorName: obj.visitorName||'-',
+            visitorDocument: obj.visitorDocument||'-',
+            visitDate: obj.visitDate||'-',
+            visitTime: obj.visitTime||'-',
+            entryTime: null,
+            exitTime: null,
+            state: 'Expirado'
+          });
+
+          resultText.textContent='Código expirado — acceso denegado';
+          infoBlock.innerHTML=`<strong>${obj.visitorName}</strong><br/>Documento: ${obj.visitorDocument}`;
+          scanNote.textContent=`Válido hasta: ${new Date(obj.expiresAt).toLocaleString('es-CO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}`;
+          return;
+        }
+
+        // If issued and not used -> first scan = ingreso
+        if(issuedIdx!==-1 && !issued[issuedIdx].used){
+          // mark used
+          issued[issuedIdx].used=true;
+          localStorage.setItem('issuedVisits',JSON.stringify(issued));
+
+          const entryTime=new Date().toISOString();
+          pushHistory({
+            tokenId: obj.tokenId,
+            visitorName: obj.visitorName||'-',
+            visitorDocument: obj.visitorDocument||'-',
+            visitDate: obj.visitDate||'-',
+            visitTime: obj.visitTime||'-',
+            entryTime: entryTime,
+            exitTime: null,
+            state: 'Ingreso'
+          });
+
+          resultText.textContent='Ingreso registrado — acceso permitido';
+          infoBlock.innerHTML=`<strong>${obj.visitorName}</strong><br/>Documento: ${obj.visitorDocument}`;
+          scanNote.textContent=`Ingreso: ${new Date(entryTime).toLocaleString('es-CO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}`;
+          return;
+        }
+
+        // If issued and already used -> treat as salida if there's an entry without exit
+        if(issuedIdx!==-1 && issued[issuedIdx].used){
+          // find existing history record for this token with null exitTime
+          const rawHist=localStorage.getItem('visitHistory');
+          const hist= rawHist? JSON.parse(rawHist):[];
+          const idx=hist.findIndex(h=>h.tokenId===obj.tokenId && (!h.exitTime || h.exitTime===null));
+          if(idx!==-1){
+            hist[idx].exitTime=new Date().toISOString();
+            hist[idx].state='Salida';
+            localStorage.setItem('visitHistory', JSON.stringify(hist));
+
+            resultText.textContent='Salida registrada';
+            infoBlock.innerHTML=`<strong>${obj.visitorName}</strong><br/>Documento: ${obj.visitorDocument}`;
+            scanNote.textContent=`Salida: ${new Date(hist[idx].exitTime).toLocaleString('es-CO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}`;
+            return;
+          }
+
+          // otherwise already used and no matching entry
+          pushHistory({
+            tokenId: obj.tokenId,
+            visitorName: obj.visitorName||'-',
+            visitorDocument: obj.visitorDocument||'-',
+            visitDate: obj.visitDate||'-',
+            visitTime: obj.visitTime||'-',
+            entryTime: null,
+            exitTime: null,
+            state: 'Utilizado'
+          });
+
+          resultText.textContent='Código ya utilizado';
+          infoBlock.innerHTML=`<strong>${obj.visitorName}</strong><br/>Documento: ${obj.visitorDocument}`;
+          scanNote.textContent='Este código ya fue utilizado anteriormente.';
+          return;
+        }
+
+        // If token not found in issued list, fallback: mark as inválido
+        pushHistory({
+          tokenId: obj.tokenId,
+          visitorName: obj.visitorName||'-',
+          visitorDocument: obj.visitorDocument||'-',
+          visitDate: obj.visitDate||'-',
+          visitTime: obj.visitTime||'-',
+          entryTime: null,
+          exitTime: null,
+          state: 'Inválido'
+        });
+        resultText.textContent='Código no reconocido';
+        infoBlock.innerHTML=`<strong>${obj.visitorName}</strong><br/>Documento: ${obj.visitorDocument}`;
+        scanNote.textContent='El código no figura como emitido por el sistema.';
+
+      }catch(e){
+        console.error(e);
+        resultText.textContent='Error leyendo token.';
+      }
+      return;
+    }
+
+    // Legacy parsing (data param)
+    try{
+      const raw=legacy;
+      const decoded=decodeURIComponent(raw);
+      // parse key:value;key:value
+      const parts=decoded.split(';').map(s=>s.trim()).filter(Boolean);
+      const obj={};
+      parts.forEach(p=>{
+        const idx=p.indexOf(':');
+        if(idx>0){
+          const k=p.slice(0,idx);
+          const v=p.slice(idx+1);
+          obj[k]=v;
+        }
+      });
+
+      const name=obj['Nombre']||'-';
+      const cedula=obj['Cédula']||'-';
+      const tower=obj['Torre']||'-';
+      const apartment=obj['Apartamento']||'-';
+      const expiresAt=obj['VálidoHasta'];
+
+      const now=new Date();
+      let valid=false;
+      if(expiresAt){
+        const exp=new Date(expiresAt);
+        valid= now <= exp;
+      }
+
+      pushHistory({
+        scannedAt: new Date().toISOString(),
+        name: name,
+        cedula: cedula,
+        tower: tower,
+        apartment: apartment,
+        expiresAt: expiresAt||null,
+        state: valid? 'Valid':'Expired'
+      });
+
+      if(valid){
+        resultText.textContent='Visita válida — acceso permitido';
+        infoBlock.innerHTML=`<strong>${name}</strong><br/>Cédula: ${cedula}<br/>Destino: Torre ${tower} Apt ${apartment}`;
+        scanNote.textContent=`Válido hasta: ${new Date(expiresAt).toLocaleString('es-CO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}`;
+      }else{
+        resultText.textContent='Código expirado o inválido — acceso denegado';
+        infoBlock.innerHTML=`<strong>${name}</strong><br/>Cédula: ${cedula}<br/>Destino: Torre ${tower} Apt ${apartment}`;
+        if(expiresAt) scanNote.textContent=`Válido hasta: ${new Date(expiresAt).toLocaleString('es-CO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}`;
+      }
+    }catch(e){
+      console.error(e);
+      resultText.textContent='Código inválido.';
+    }
+  })();
+  </script>
+</body>
+</html>

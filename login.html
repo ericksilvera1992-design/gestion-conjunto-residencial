@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Login - Sistema Lucrier</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-container">
+    <div class="auth-left">
+      <div class="auth-logo">🏢</div>
+      <h2>Conjunto Residencial</h2>
+      <p class="platform-name">Lucrier</p>
+      <p class="platform-desc">Plataforma integral para la administración eficiente de tu comunidad residencial.</p>
+    </div>
+    <main class="auth-card">
+      <h1>Bienvenido</h1>
+    <p class="subtitle">Ingresa tus credenciales para continuar</p>
+    <form id="loginForm" class="form">
+      <div class="field">
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" placeholder="admin@lucrier.com.co" required>
+      </div>
+      <div class="field">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" placeholder="●●●●●●●●" required>
+      </div>
+      <div class="form-row">
+        <label class="checkbox"><input type="checkbox" id="remember"> Recordarme</label>
+        <a href="#" class="forgot">¿Olvidé mi contraseña?</a>
+      </div>
+      <button type="submit" class="btn primary block">Ingresar</button>
+    </form>
+    <hr>
+    <p class="muted small">Sistema exclusivo para administradores y residentes autorizados.</p>
+  </main>
+  </div>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
