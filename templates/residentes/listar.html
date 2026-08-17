@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Residentes - Lucrier</title>
+</head>
+
+<body>
+
+    <header>
+        <h1>Lucrier</h1>
+        <h2>Listado de residentes</h2>
+    </header>
+
+    <main>
+        {% if residentes %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Correo</th>
+                        <th>Teléfono</th>
+                        <th>Tipo de residente</th>
+                        <th>Titular</th>
+                        <th>Documento</th>
+                        <th>Vivienda</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for residente in residentes %}
+                        <tr>
+                            <td>{{ residente.id_residente }}</td>
+                            <td>{{ residente.nombres }}</td>
+                            <td>{{ residente.apellidos }}</td>
+                            <td>{{ residente.correo }}</td>
+                            <td>{{ residente.telefono }}</td>
+                            <td>{{ residente.tipo_residente }}</td>
+                            <td>{{ residente.titular }}</td>
+                            <td>{{ residente.documento }}</td>
+                            <td>{{ residente.vivienda.codigo_vivienda }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No hay residentes registrados.</p>
+        {% endif %}
+    </main>
+
+</body>
+</html>
