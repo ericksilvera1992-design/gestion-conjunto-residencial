@@ -16,4 +16,10 @@ urlpatterns = [
         views.listar_residentes,
         name='listar_residentes'
     ),
+
+    path(
+        'crear/',
+        views.crear_residente,
+        name='crear_residente'
+    ),
 ]

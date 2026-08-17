@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Registrar residente - Lucrier</title>
+</head>
+
+<body>
+
+    <header>
+        <h1>Lucrier</h1>
+        <h2>Registrar residente</h2>
+    </header>
+
+    <main>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div>
+                <label for="nombres">Nombres:</label>
+                <input
+                    type="text"
+                    id="nombres"
+                    name="nombres"
+                    required
+                >
+            </div>
+
+            <br>
+
+            <div>
+                <label for="apellidos">Apellidos:</label>
+                <input
+                    type="text"
+                    id="apellidos"
+                    name="apellidos"
+                    required
+                >
+            </div>
+
+            <br>
+
+            <div>
+                <label for="correo">Correo:</label>
+                <input
+                    type="email"
+                    id="correo"
+                    name="correo"
+                >
+            </div>
+
+            <br>
+
+            <div>
+                <label for="telefono">Teléfono:</label>
+                <input
+                    type="text"
+                    id="telefono"
+                    name="telefono"
+                    required
+                >
+            </div>
+
+            <br>
+
+            <div>
+                <label for="tipo_residente">
+                    Tipo de residente:
+                </label>
+
+                <select
+                    id="tipo_residente"
+                    name="tipo_residente"
+                    required
+                >
+                    <option value="">Seleccione</option>
+
+                    <option value="Propietario">
+                        Propietario
+                    </option>
+
+                    <option value="Arrendatario">
+                        Arrendatario
+                    </option>
+
+                    <option value="Familiar">
+                        Familiar
+                    </option>
+                </select>
+            </div>
+
+            <br>
+
+            <div>
+                <label for="titular">¿Es titular?</label>
+
+                <select
+                    id="titular"
+                    name="titular"
+                    required
+                >
+                    <option value="">Seleccione</option>
+                    <option value="SI">Sí</option>
+                    <option value="NO">No</option>
+                </select>
+            </div>
+
+            <br>
+
+            <div>
+                <label for="documento">Documento:</label>
+
+                <input
+                    type="text"
+                    id="documento"
+                    name="documento"
+                    required
+                >
+            </div>
+
+            <br>
+
+            <div>
+                <label for="id_vivienda">
+                    Vivienda:
+                </label>
+
+                <select
+                    id="id_vivienda"
+                    name="id_vivienda"
+                    required
+                >
+                    <option value="">
+                        Seleccione una vivienda
+                    </option>
+
+                    {% for vivienda in viviendas %}
+                        <option value="{{ vivienda.id_vivienda }}">
+                            {{ vivienda.codigo_vivienda }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <br>
+
+            <button type="submit">
+                Registrar residente
+            </button>
+
+        </form>
+
+        <br>
+
+        <a href="{% url 'listar_residentes' %}">
+            Volver al listado
+        </a>
+
+    </main>
+
+</body>
+
+</html>
