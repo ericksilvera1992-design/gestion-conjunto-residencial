@@ -1,0 +1,22 @@
+# Entornos virtuales
+.venv/
+.venv313/
+
+# Paquetes locales
+.packages/
+
+# Archivos temporales
+.tmp/
+
+# Cachés de Python
+__pycache__/
+*.py[cod]
+
+# Variables de entorno
+.env
+
+# Respaldos de bases de datos
+*.sql
+
+# Configuración local de VS Code
+.vscode/
