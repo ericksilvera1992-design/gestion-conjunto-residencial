@@ -17,4 +17,5 @@ urlpatterns = [
         'residentes/',
         include('residentes.urls')
     ),
+    path('', include('gestion.urls')),
 ]

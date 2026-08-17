@@ -81,6 +81,38 @@ class ResidenteControlador:
         return texto
 
     @staticmethod
+    def _validar_documento(valor, nombre_campo="documento"):
+        """
+        Valida que el documento sea obligatorio y contenga
+        únicamente números.
+
+        Args:
+            valor: Documento que se desea validar.
+            nombre_campo: Nombre del campo que se está validando.
+
+        Returns:
+            str: Documento validado.
+
+        Raises:
+            ValueError: Si el documento está vacío o contiene
+                caracteres diferentes de números.
+        """
+        documento = str(valor).strip() if valor is not None else ""
+
+        if not documento:
+            raise ValueError(
+                f"El campo {nombre_campo} es obligatorio."
+            )
+
+        if not documento.isdigit():
+            raise ValueError(
+                f"El campo {nombre_campo} debe contener "
+                "únicamente números."
+            )
+
+        return documento
+
+    @staticmethod
     def _validar_datos(
         nombres,
         apellidos,
@@ -143,7 +175,7 @@ class ResidenteControlador:
                 titular,
                 "titular"
             ),
-            "documento": ResidenteControlador._validar_texto(
+            "documento": ResidenteControlador._validar_documento(
                 documento,
                 "documento"
             ),
@@ -174,7 +206,7 @@ class ResidenteControlador:
         Returns:
             Resultado de la búsqueda del residente.
         """
-        documento = ResidenteControlador._validar_texto(
+        documento = ResidenteControlador._validar_documento(
             documento,
             "documento"
         )

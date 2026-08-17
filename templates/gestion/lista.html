@@ -1,0 +1,22 @@
+{% extends 'gestion/base.html' %}
+{% block title %}{{ titulo }} - Lucrier{% endblock %}
+{% block content %}
+<h1>{{ titulo }}</h1>
+{% if accion == 'vehiculos' %}<a class="button" href="{% url 'crear_vehiculo' %}">Registrar vehículo</a>{% endif %}
+{% if accion == 'visitas' %}<a class="button" href="{% url 'crear_visita' %}">Registrar visita</a>{% endif %}
+{% if accion == 'reservas' %}<a class="button" href="{% url 'crear_reserva' %}">Registrar reserva</a>{% endif %}
+<br><br>
+{% if objetos %}
+<table><thead><tr>
+{% if accion == 'vehiculos' %}<th>Placa</th><th>Tipo</th><th>Marca</th><th>Propietario</th><th>Vivienda</th><th>Estado</th>{% endif %}
+{% if accion == 'visitas' %}<th>Visitante</th><th>Documento</th><th>Anfitrión</th><th>Entrada</th><th>Salida</th><th>Estado</th><th>Acción</th>{% endif %}
+{% if accion == 'reservas' %}<th>Zona</th><th>Fecha</th><th>Horario</th><th>Residente</th><th>Estado</th><th>Acción</th>{% endif %}
+</tr></thead><tbody>
+{% for item in objetos %}<tr>
+{% if accion == 'vehiculos' %}<td>{{ item.placa }}</td><td>{{ item.get_tipo_display }}</td><td>{{ item.marca|default:'-' }}</td><td>{{ item.residente }}</td><td>{{ item.residente.vivienda }}</td><td>{{ item.activo|yesno:'Activo,Inactivo' }}</td>{% endif %}
+{% if accion == 'visitas' %}<td>{{ item }}</td><td>{{ item.documento }}</td><td>{{ item.residente }}</td><td>{{ item.fecha_entrada|date:'d/m/Y H:i' }}</td><td>{{ item.fecha_salida|date:'d/m/Y H:i'|default:'-' }}</td><td>{{ item.get_estado_display }}</td><td class="actions">{% if item.estado == 'EN_CONJUNTO' %}<form method="post" action="{% url 'finalizar_visita' item.id %}">{% csrf_token %}<button class="secondary">Registrar salida</button></form>{% endif %}</td>{% endif %}
+{% if accion == 'reservas' %}<td>{{ item.get_zona_comun_display }}</td><td>{{ item.fecha|date:'d/m/Y' }}</td><td>{{ item.hora_inicio|time:'H:i' }} - {{ item.hora_fin|time:'H:i' }}</td><td>{{ item.residente }}</td><td>{{ item.get_estado_display }}</td><td class="actions">{% if item.estado != 'CANCELADA' %}<form method="post" action="{% url 'cancelar_reserva' item.id %}">{% csrf_token %}<button class="danger">Cancelar</button></form>{% endif %}</td>{% endif %}
+</tr>{% endfor %}
+</tbody></table>
+{% else %}<div class="card"><p>No hay registros todavía.</p></div>{% endif %}
+{% endblock %}

@@ -8,6 +8,9 @@ y registrar residentes.
 from django.shortcuts import redirect, render
 
 from .models import Residente, Vivienda
+from backend.controladores.residente_controlador import (
+    ResidenteControlador
+)
 
 
 def listar_residentes(request):
@@ -55,22 +58,70 @@ def crear_residente(request):
             ''
         ).strip()
 
-        vivienda = Vivienda.objects.get(
-            pk=id_vivienda
-        )
+        try:
+            datos = ResidenteControlador._validar_datos(
+                nombres,
+                apellidos,
+                correo,
+                telefono,
+                tipo_residente,
+                titular,
+                documento,
+                id_vivienda
+            )
 
-        Residente.objects.create(
-            nombres=nombres,
-            apellidos=apellidos,
-            correo=correo,
-            telefono=telefono,
-            tipo_residente=tipo_residente,
-            titular=titular,
-            documento=documento,
-            vivienda=vivienda
-        )
+            vivienda = Vivienda.objects.get(
+                pk=datos['id_vivienda']
+            )
 
-        return redirect('listar_residentes')
+            Residente.objects.create(
+                nombres=datos['nombres'],
+                apellidos=datos['apellidos'],
+                correo=datos['correo'],
+                telefono=datos['telefono'],
+                tipo_residente=datos['tipo_residente'],
+                titular=datos['titular'],
+                documento=datos['documento'],
+                vivienda=vivienda
+            )
+
+            return redirect('listar_residentes')
+
+        except ValueError as error:
+            return render(
+                request,
+                'residentes/crear.html',
+                {
+                    'viviendas': viviendas,
+                    'error': str(error),
+                    'nombres': nombres,
+                    'apellidos': apellidos,
+                    'correo': correo,
+                    'telefono': telefono,
+                    'tipo_residente': tipo_residente,
+                    'titular': titular,
+                    'documento': documento,
+                    'id_vivienda': id_vivienda
+                }
+            )
+
+        except Vivienda.DoesNotExist:
+            return render(
+                request,
+                'residentes/crear.html',
+                {
+                    'viviendas': viviendas,
+                    'error': 'La vivienda seleccionada no existe.',
+                    'nombres': nombres,
+                    'apellidos': apellidos,
+                    'correo': correo,
+                    'telefono': telefono,
+                    'tipo_residente': tipo_residente,
+                    'titular': titular,
+                    'documento': documento,
+                    'id_vivienda': id_vivienda
+                }
+            )
 
     return render(
         request,

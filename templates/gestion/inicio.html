@@ -1,0 +1,12 @@
+{% extends 'gestion/base.html' %}
+{% block title %}Inicio - Lucrier{% endblock %}
+{% block content %}
+<h1>Panel de gestión</h1>
+<p class="muted">Resumen operativo del conjunto residencial.</p>
+<section class="stats">
+    <div class="card stat"><strong>{{ vehiculos_activos }}</strong>Vehículos activos</div>
+    <div class="card stat"><strong>{{ visitas_activas }}</strong>Visitas en conjunto</div>
+    <div class="card stat"><strong>{{ reservas_hoy }}</strong>Reservas de hoy</div>
+</section>
+<div class="card"><h2>Accesos rápidos</h2><p><a class="button" href="{% url 'crear_visita' %}">Registrar visita</a> <a class="button" href="{% url 'crear_reserva' %}">Registrar reserva</a> <a class="button" href="{% url 'crear_vehiculo' %}">Registrar vehículo</a></p></div>
+{% endblock %}

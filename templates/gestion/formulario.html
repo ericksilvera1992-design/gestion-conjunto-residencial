@@ -1,0 +1,15 @@
+{% extends 'gestion/base.html' %}
+{% block title %}{{ titulo }} - Lucrier{% endblock %}
+{% block content %}
+<h1>{{ titulo }}</h1>
+<form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}{{ field.errors }}
+    {% endfor %}
+    <button type="submit">Guardar</button>
+    <a class="button secondary" href="{% url volver %}">Cancelar</a>
+</form>
+{% endblock %}

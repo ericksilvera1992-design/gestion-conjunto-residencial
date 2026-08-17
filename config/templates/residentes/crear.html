@@ -27,6 +27,7 @@
                     type="text"
                     id="nombres"
                     name="nombres"
+                    value="{{ nombres|default:'' }}"
                     required
                 >
             </div>
@@ -39,6 +40,7 @@
                     type="text"
                     id="apellidos"
                     name="apellidos"
+                    value="{{ apellidos|default:'' }}"
                     required
                 >
             </div>
@@ -51,6 +53,7 @@
                     type="email"
                     id="correo"
                     name="correo"
+                    value="{{ correo|default:'' }}"
                 >
             </div>
 
@@ -62,6 +65,7 @@
                     type="text"
                     id="telefono"
                     name="telefono"
+                    value="{{ telefono|default:'' }}"
                     required
                 >
             </div>
@@ -80,15 +84,24 @@
                 >
                     <option value="">Seleccione</option>
 
-                    <option value="Propietario">
+                    <option
+                        value="Propietario"
+                        {% if tipo_residente == "Propietario" %}selected{% endif %}
+                    >
                         Propietario
                     </option>
 
-                    <option value="Arrendatario">
+                    <option
+                        value="Arrendatario"
+                        {% if tipo_residente == "Arrendatario" %}selected{% endif %}
+                    >
                         Arrendatario
                     </option>
 
-                    <option value="Familiar">
+                    <option
+                        value="Familiar"
+                        {% if tipo_residente == "Familiar" %}selected{% endif %}
+                    >
                         Familiar
                     </option>
                 </select>
@@ -105,8 +118,20 @@
                     required
                 >
                     <option value="">Seleccione</option>
-                    <option value="SI">Sí</option>
-                    <option value="NO">No</option>
+
+                    <option
+                        value="SI"
+                        {% if titular == "SI" %}selected{% endif %}
+                    >
+                        Sí
+                    </option>
+
+                    <option
+                        value="NO"
+                        {% if titular == "NO" %}selected{% endif %}
+                    >
+                        No
+                    </option>
                 </select>
             </div>
 
@@ -119,12 +144,15 @@
                     type="text"
                     id="documento"
                     name="documento"
-                    pattern="[0-9]+"
-                    inputmode="numeric"
+                    value="{{ documento|default:'' }}"
                     required
-                    oninvalid="this.setCustomValidity('El campo documento debe contener únicamente números.')"
-                    oninput="this.setCustomValidity('')"
                 >
+
+                {% if error %}
+                    <p>
+                        <strong>Error:</strong> {{ error }}
+                    </p>
+                {% endif %}
             </div>
 
             <br>
@@ -144,7 +172,10 @@
                     </option>
 
                     {% for vivienda in viviendas %}
-                        <option value="{{ vivienda.id_vivienda }}">
+                        <option
+                            value="{{ vivienda.id_vivienda }}"
+                            {% if vivienda.id_vivienda|stringformat:"s" == id_vivienda %}selected{% endif %}
+                        >
                             {{ vivienda.codigo_vivienda }}
                         </option>
                     {% endfor %}
